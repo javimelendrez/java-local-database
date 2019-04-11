@@ -16,8 +16,11 @@ public class Main
         String table = myObj.nextLine();  // Read user input
         System.out.println("Enter the column you'd like to see.");
         String col = myObj.nextLine();  // Read user input
+        //ask the user if they want the data to be sorted
+        System.out.println("Would you like the data to be sorted. ( y / n ) ?");
+        String sort = myObj.nextLine();  // Read user input
         //get the data
-        get(table, col);
+        get(table, col, sort);
     }
     //function to connect to database
     public static Connection getConnection() throws Exception{
@@ -37,15 +40,36 @@ public class Main
         }
         return null;
     }
-    public static ArrayList<String> get(String table, String col) throws Exception{
+    public static ArrayList<String> get(String table, String col, String sort) throws Exception{
         try{
             Connection conn = getConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM "+table);
-            ResultSet result = statement.executeQuery();
-            ArrayList<String> array = new ArrayList<String>();
-            while (result.next()){
-                System.out.println(result.getString(""+col));
-                System.out.println(" ");
+            //DEPENDING ON USER CHOICE SORT OR NOT
+            //sorting is not working
+            //i tried these methods not sure why it is not working
+            //https://www.w3schools.com/sql/sql_orderby.asp
+
+            if (sort == "y")
+            {
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM "+table+" ORDER BY DESC");
+                ResultSet result = statement.executeQuery();
+                ArrayList<String> array = new ArrayList<String>();
+                while (result.next()){
+                    System.out.println(result.getString(""+col));
+                    System.out.println(" ");
+                    array.add(result.getString(col));
+                    return array;
+                }
+            }else {
+                PreparedStatement statement = conn.prepareStatement("SELECT * FROM " + table);
+                ResultSet result = statement.executeQuery();
+                ArrayList<String> array = new ArrayList<String>();
+                while (result.next()) {
+                    System.out.println(result.getString("" + col));
+                    System.out.println(" ");
+                    array.add(result.getString(col));
+                }
+                return array;
+
             }
         }catch (Exception e){
             System.out.println(e);
