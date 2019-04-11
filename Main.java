@@ -3,14 +3,21 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
+import java.util.Scanner;  // Import the Scanner class
 public class Main
 {
     public static void main(String[] args) throws Exception
     {
         //call function to connect
         getConnection();
-        get();
+        //ask user for into to get data
+        System.out.println("Enter the table you want to get data from. Note: mysql is case sensitive!");
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+        String table = myObj.nextLine();  // Read user input
+        System.out.println("Enter the column you'd like to see.");
+        String col = myObj.nextLine();  // Read user input
+        //get the data
+        get(table, col);
     }
     //function to connect to database
     public static Connection getConnection() throws Exception{
@@ -23,21 +30,21 @@ public class Main
             Class.forName(driver);
 
             Connection conn = DriverManager.getConnection(url,username,password);
-            System.out.println("Connected");
+            System.out.println("Connection to database Successful");
             return conn;
         }catch (Exception e){
             System.out.println(e);
         }
         return null;
     }
-    public static ArrayList<String> get() throws Exception{
+    public static ArrayList<String> get(String table, String col) throws Exception{
         try{
             Connection conn = getConnection();
-            PreparedStatement statement = conn.prepareStatement("SELECT * FROM EMPLOYEE");
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM "+table);
             ResultSet result = statement.executeQuery();
             ArrayList<String> array = new ArrayList<String>();
             while (result.next()){
-                System.out.println(result.getString("Fname"));
+                System.out.println(result.getString(""+col));
                 System.out.println(" ");
             }
         }catch (Exception e){
